@@ -1,0 +1,55 @@
+body {
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+header{
+    background-color: aquamarine;
+    color: black;
+    padding: 15px;
+}
+
+main {
+    padding: 20px;
+}
+
+button {
+    background-color: aquamarine;
+    color: black;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: antiquewhite;
+}
+
+#quiz-container {
+    text-align: left;
+}
+
+#question {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.options {
+    margin-bottom: 20px;
+}
+
+.option {
+    margin: 5px;
+}
+
+#result {
+    font-size: 20px;
+    margin-top: 20px;
+}
+
+#timer {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
