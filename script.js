@@ -19,9 +19,9 @@ const questions = [
         correctAnswer: 'Web Application Programming Interface'
     },
     {
-        question: 'What is an event lister?',
+        question: 'What is an event listener?',
         options: ['It places audio on a page', 'It connects the page to the local microphone', 'It listens for a specific event on the page, then executes connected code', 'It listens for any events happening in town'],
-        correctAnswer:'It listens for a specific event on the page, then executes connected code'
+        correctAnswer: 'It listens for a specific event on the page, then executes connected code'
     },
     {
         question: 'What does PreventDefault() do?',
@@ -45,12 +45,13 @@ function saveHighScores() {
 }
 
 function displayHighScores() {
-    const highScoresList = highScores  
-        .map(score => `<li>${score}%</li>`)
+    const highScoresList = highScores
+        .map(entry => `<li>${entry.initials}: ${entry.score}%</li>`)
         .join('');
 
     highScoresContainer.innerHTML = `<h2>High Scores</h2><ol>${highScoresList}</ol>`;
 }
+
 
 function startQuiz() {
     startButton.style.display = 'none';
@@ -74,8 +75,6 @@ function showQuestion(question) {
         button.addEventListener('click', () => selectOption(question, option));
         optionsContainer.appendChild(button);
     });
-
-    quizEnded = false;
 }
 
 function resetState() {
@@ -90,18 +89,23 @@ function selectOption(question, selectedOption) {
         resultContainer.innerText = 'Correct!';
     } else {
         resultContainer.innerText = 'Incorrect!';
+        // Subtract 10 seconds for an incorrect answer
+        subtractTime(10);
     }
 
     currentQuestionIndex++;
-
-    console.log("selectOption - currentQuestionIndex:", currentQuestionIndex);
-    console.log("selectOption - quizEnded:", quizEnded);
 
     if (currentQuestionIndex < questions.length) {
         setNextQuestion();
     } else {
         endQuiz();
     }
+}
+
+function subtractTime(seconds) {
+    let timeRemaining = parseInt(timercontainer.innerText.split(' ')[1]); // Get current time remaining
+    timeRemaining -= seconds;
+    timercontainer.innerText = `Time: ${timeRemaining}s`;
 }
 
 function startTimer() {
@@ -124,19 +128,16 @@ function endQuiz() {
 
     const finalScore = (score / questions.length) * 100;
 
-    resultContainer.innerText = `Quiz Over! Your Score: ${finalScore.toFixed(2)}%`;
+    const userInitials = prompt("Enter your initials:");
 
-    highScores.push(finalScore.toFixed(2));
+    highScores.push({ initials: userInitials, score: finalScore.toFixed(2) });
     saveHighScores();
 
     loadHighScores();
     displayHighScores();
 
-    questionContainer.innerText = ""; // Clear the questionContainer
-
-    console.log("endQuiz - quizEnded:", quizEnded);
-    quizEnded = true; // Set quizEnded to true after displaying the final score
-    console.log("endQuiz - quizEnded:", quizEnded);
+    quizEnded = true;
+    questionContainer.innerText = "";
 }
 
 startButton.addEventListener('click', startQuiz);
