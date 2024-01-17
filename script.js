@@ -4,11 +4,13 @@ const questionContainer = document.getElementById('question');
 const optionsContainer = document.getElementById('options-container');
 const resultContainer = document.getElementById('result');
 const timercontainer = document.getElementById('timer');
+const highScoresContainer = document.getElementById('high-scores');
 
 let currentQuestionIndex = 0;
 let score = 0;
 let timer; 
 let quizEnded = false;
+let highScores = [];
 
 const questions = [
     {
@@ -23,8 +25,8 @@ const questions = [
     },
     {
         question: 'What does PreventDefault() do?',
-        options: ['It prevents the page from using comic sans', 'It prevents a default action, like the page reloading, from occuring', 'It prevents the page from crashing', 'It allows the page to connect JavaScript from within the HTML'],
-        correctAnswer: 'It prevents a default action, like the page reloading, from occuring'
+        options: ['It prevents the page from using comic sans', 'It prevents a default action, like the page reloading, from occurring', 'It prevents the page from crashing', 'It allows the page to connect JavaScript from within the HTML'],
+        correctAnswer: 'It prevents a default action, like the page reloading, from occurring'
     },
     {
         question: 'How many Web APIs are there?',
@@ -32,6 +34,23 @@ const questions = [
         correctAnswer: 'New Web APIs are created all the time'
     }
 ];
+
+function loadHighScores() {
+    const storedHighScores = localStorage.getItem('highScores');
+    highScores = storedHighScores ? JSON.parse(storedHighScores) : []
+}
+
+function saveHighScores() {
+    localStorage.setItem('highScores', JSON.stringify(highScores));
+}
+
+function displayHighScores() {
+    const highScoresList = highScores  
+        .map(score => `<li>${score}%</li>`)
+        .join('');
+
+    highScoresContainer.innerHTML = `<h2>High Scores</h2><ol>${highScoresList}</ol>`;
+}
 
 function startQuiz() {
     startButton.style.display = 'none';
@@ -44,6 +63,7 @@ function setNextQuestion() {
     resetState();
     showQuestion(questions[currentQuestionIndex]);
 }
+
 function showQuestion(question) {
     questionContainer.innerText = question.question;
 
@@ -53,8 +73,9 @@ function showQuestion(question) {
         button.classList.add('option');
         button.addEventListener('click', () => selectOption(question, option));
         optionsContainer.appendChild(button);
-        quizEnded = false;
     });
+
+    quizEnded = false;
 }
 
 function resetState() {
@@ -65,19 +86,20 @@ function resetState() {
 
 function selectOption(question, selectedOption) {
     if (selectedOption === question.correctAnswer) {
-        score+= 1;
+        score += 1;
         resultContainer.innerText = 'Correct!';
-    }
-    else{
+    } else {
         resultContainer.innerText = 'Incorrect!';
     }
 
     currentQuestionIndex++;
-    
-    if (currentQuestionIndex < question.length) {
+
+    console.log("selectOption - currentQuestionIndex:", currentQuestionIndex);
+    console.log("selectOption - quizEnded:", quizEnded);
+
+    if (currentQuestionIndex < questions.length) {
         setNextQuestion();
-    }
-    else {
+    } else {
         endQuiz();
     }
 }
@@ -99,9 +121,22 @@ function startTimer() {
 function endQuiz() {
     clearInterval(timer);
     quizContainer.style.display = 'none';
-    const finalScore = (score/ questions.length) * 100;
+
+    const finalScore = (score / questions.length) * 100;
+
     resultContainer.innerText = `Quiz Over! Your Score: ${finalScore.toFixed(2)}%`;
-    quizEnded = true;
+
+    highScores.push(finalScore.toFixed(2));
+    saveHighScores();
+
+    loadHighScores();
+    displayHighScores();
+
+    questionContainer.innerText = ""; // Clear the questionContainer
+
+    console.log("endQuiz - quizEnded:", quizEnded);
+    quizEnded = true; // Set quizEnded to true after displaying the final score
+    console.log("endQuiz - quizEnded:", quizEnded);
 }
 
-startButton, addEventListener('click', startQuiz);
+startButton.addEventListener('click', startQuiz);
