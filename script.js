@@ -8,14 +8,14 @@ const highScoresContainer = document.getElementById('high-scores');
 
 let currentQuestionIndex = 0;
 let score = 0;
-let timer; 
+let timer;
 let quizEnded = false;
 let highScores = [];
 
 const questions = [
     {
         question: 'What does Web API stand for?',
-        options: ['Web Application Programming Interface','Web Application Program Index', 'Web Array Pairing Interface', ' Web Application Program Initializer'],
+        options: ['Web Application Programming Interface', 'Web Application Program Index', 'Web Array Pairing Interface', ' Web Application Program Initializer'],
         correctAnswer: 'Web Application Programming Interface'
     },
     {
@@ -37,7 +37,7 @@ const questions = [
 
 function loadHighScores() {
     const storedHighScores = localStorage.getItem('highScores');
-    highScores = storedHighScores ? JSON.parse(storedHighScores) : []
+    highScores = storedHighScores ? JSON.parse(storedHighScores) : [];
 }
 
 function saveHighScores() {
@@ -51,7 +51,6 @@ function displayHighScores() {
 
     highScoresContainer.innerHTML = `<h2>High Scores</h2><ol>${highScoresList}</ol>`;
 }
-
 
 function startQuiz() {
     startButton.style.display = 'none';
@@ -78,7 +77,7 @@ function showQuestion(question) {
 }
 
 function resetState() {
-    while (optionsContainer.firstChild){
+    while (optionsContainer.firstChild) {
         optionsContainer.removeChild(optionsContainer.firstChild);
     }
 }
@@ -114,12 +113,12 @@ function startTimer() {
     timer = setInterval(() => {
         timercontainer.innerText = `Time: ${timeRemaining}s`;
 
-        if (timeRemaining <= 0){
+        if (timeRemaining <= 0) {
             endQuiz();
         }
 
         timeRemaining--;
-    },1000);
+    }, 1000);
 }
 
 function endQuiz() {
@@ -128,9 +127,19 @@ function endQuiz() {
 
     const finalScore = (score / questions.length) * 100;
 
-    const userInitials = prompt("Enter your initials:");
+    resultContainer.innerText = `Quiz Over! Your Score: ${finalScore.toFixed(2)}%`;
 
-    highScores.push({ initials: userInitials, score: finalScore.toFixed(2) });
+    highScores.push({
+        initials: '',
+        score: finalScore.toFixed(2)
+    });
+
+    // Prompt for user's initials
+    const userInitials = prompt('Enter your initials:');
+
+    // Update the last entry in highScores with user's initials
+    highScores[highScores.length - 1].initials = userInitials || 'Anonymous';
+
     saveHighScores();
 
     loadHighScores();
